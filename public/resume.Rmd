@@ -1,7 +1,7 @@
 ---
 title: "About Me!"
 author: "Tien Angel Nguyen"
-date: "12/15/2019"
+date: "2019-12-14"
 output: html_document
 ---
 
@@ -29,4 +29,13 @@ I was also able to volunteer as a research lab assistant for an infectious disea
 
 I am very familiar with: Microsoft Excel, Powerpoint, and Word, and R Programming. I have also been introduced to Python.
 I am able to fluently speak English and Vietnamese, and have an intermediate-level knowledge of Spanish, Korean, and ASL. 
+
+---
+
+## Contact Me:
+
+My email is: anguyen0107@gmail.com; do feel free to send me any questions/concerns. 
+
+You can also click <a href="mailto:{{ .Site.Params.Social.Email }}">here</a>!
+
 
