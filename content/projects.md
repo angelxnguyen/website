@@ -5,9 +5,9 @@ tags: ["projects"]
 title: "Projects"
 showpagemeta: false
 ---
-## Projects 
+# __Projects__ 
 
-Here are some projects I have been working on:
+### Below are some projects that I have completed:
 
 - [Does Happiness Affect Life Expectancy?](/Project1/)
 
