@@ -14,6 +14,44 @@ description: ''
 
 ## Introduction:
 
-In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if  you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post. 
+In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if  you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post such as using the package "Reticulate", regular expression, and some things about python bioinformatics.
+
+---
+
+## Calling Python from R and Reticulate:
+
+Firstly, I learned that through the package "Reticulate" in R, I am able to call on R and then allow Python and R to talk to each other. This means that I can use R to read and make adjustments to the data, then use this data with Python and matplotlib to then graph it. This is executed below:
+
+---
+
+```{r}
+library(dplyr)
+faithful
+summary(faithful)
+faithful <- mutate (faithful, eruptions_hr = eruptions/60)
+faithful <- mutate (faithful, waiting_hr = waiting/60)
+head(faithful)
+```
+
+```{python}
+import matplotlib.pyplot as plt 
+plot1=plt.scatter(r.faithful["eruptions_hr"], r.faithful["waiting_hr"])
+plt.show(plot1)
+```
+
+I was able to use R in order to call in the data that I will be using, then with the package "dplyr", I was able to create two new variables in the dataset, Faithful. I used the function mutate() in order to convert the two variables from minutes to hours. I then used this altered dataset in Python and was able to create a scatterplot with "reticulate" and "matplotlib". 
+
+---
+
+## Regular Expression
+
+Regular expression can be used in order to search through a large paragraph or chunk of information and find specific patterns that you are looking for. You can use 
+
+```{python}
+
+
+```
+
+
 
 
