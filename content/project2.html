@@ -1,5 +1,5 @@
 ---
-title: "Project 2"
+title: "World of Warcraft: Battlegrounds Analysis"
 author: "Tien Nguyen TN7898"
 date: "11/25/2019"
 output: html_document
@@ -7,11 +7,14 @@ output: html_document
 
 
 
-<p>###Introduction:</p>
-<p><em>In this project, I will be modeling, testing, and making predictions on a dataset created from observations on the game, <strong>World of Warcraft</strong>, which is a MMORPG created by <strong>Blizzard</strong>. This dataset contains information about battlegrounds, which are timed matches in an instanced area where players are able to compete against other players (PvP). Players are placed in teams on the basis of the faction that they belong to, the Alliance or the Horde, and their character’s level, so the matches consist of similar team compositions competing against one another. At the end of each battleground, there is a summary containing information for each of the players for both factions. I will be specifically looking at the numeric variables: <strong>Damage done, Healing done, Honorable kills, and Honor awarded</strong> and the categorical variable: <strong>Faction and Win</strong>.</em></p>
+<div id="introduction" class="section level3">
+<h3>Introduction:</h3>
+<p>In this project, I will be modeling, testing, and making predictions on a dataset created from observations on the game, <strong>World of Warcraft</strong>, which is a MMORPG created by <strong>Blizzard</strong>. This dataset contains information about battlegrounds, which are timed matches in an instanced area where players are able to compete against other players (PvP). Players are placed in teams on the basis of the faction that they belong to, the Alliance or the Horde, and their character’s level, so the matches consist of similar team compositions competing against one another. At the end of each battleground, there is a summary containing information for each of the players for both factions. I will be specifically looking at the numeric variables: <strong>Damage done, Healing done, Honorable kills, and Honor awarded</strong> and the categorical variable: <strong>Faction and Win</strong>.</p>
 <hr />
-<p>###Data Preparation:</p>
-<p><em>I will be preloading all of the packages I will be using in this project. Additionally, to prepare the data and make it easier to understand, I renamed the abbreviations in the columns with their full names.</em></p>
+</div>
+<div id="data-preparation" class="section level3">
+<h3>Data Preparation:</h3>
+<p>I will be preloading all of the packages I will be using in this project. Additionally, to prepare the data and make it easier to understand, I renamed the abbreviations in the columns with their full names.</p>
 <pre class="r"><code># Loading packages
 library(ggplot2)
 library(dplyr)
@@ -29,11 +32,13 @@ colnames(wowdata) &lt;- c(&quot;Battleground&quot;, &quot;Code&quot;, &quot;Fact
     &quot;Healing_done&quot;, &quot;Honor_awarded&quot;, &quot;Win&quot;, &quot;Lose&quot;, &quot;Class_speciality&quot;, 
     &quot;Bonus_event&quot;)</code></pre>
 <hr />
-<p>###Performing a MANOVA Test:</p>
-<p><em>I want to simultaneously determine whether Damage done, Healing done, and Honor awarded differ by Faction. I am doing this because I want to see if there is a difference in perfomance based on a player’s Faction. If the MANOVA results in significant findings, ANOVA tests and post hoc tests will be ran to determine where the significance lies in the dependent variables.</em></p>
-<p><em><strong>My hypotheses for my MANOVA test:</strong></em></p>
-<p><em>Null Hypothesis: For each of the dependent variables (Damage done, Healing done, and Honor awarded), the means of each Faction are equal.</em></p>
-<p><em>Alternative Hypothesis: For at least one dependent variable (Damage done, Healing done, and Honor awarded), at least one Faction mean is different.</em></p>
+</div>
+<div id="performing-a-manova-test" class="section level3">
+<h3>Performing a MANOVA Test:</h3>
+<p>I want to simultaneously determine whether Damage done, Healing done, and Honor awarded differ by Faction. I am doing this because I want to see if there is a difference in perfomance based on a player’s Faction. If the MANOVA results in significant findings, ANOVA tests and post hoc tests will be ran to determine where the significance lies in the dependent variables.</p>
+<p><strong>My hypotheses for my MANOVA test:</strong></p>
+<p>Null Hypothesis: For each of the dependent variables (Damage done, Healing done, and Honor awarded), the means of each Faction are equal.</p>
+<p>Alternative Hypothesis: For at least one dependent variable (Damage done, Healing done, and Honor awarded), at least one Faction mean is different.</p>
 <pre class="r"><code># Eyeball testing the assumption for homogeneity of
 # covariances.
 covmats &lt;- wowdata %&gt;% group_by(Faction) %&gt;% do(covs = cov(.[8:10]))
@@ -105,15 +110,16 @@ summary(man)  #Signigicant results.</code></pre>
 <pre><code>## [1] 0.2649081</code></pre>
 <pre class="r"><code>0.05/6  #Corrected significance level = 0.008333333.</code></pre>
 <pre><code>## [1] 0.008333333</code></pre>
-<p><em>There are 6 assumptions for a MANOVA test and because there are so many it is difficult to entirely test or meet all of them; however, most of them can be assumed to be met for this dataset. The samples were random and independent of one another, there are no extreme univariate or multivariate outliers because those players can only be underperformers, which are generally removed from matches within a minute of being idle, so their data will not be included at the end. The dependent variables were not found to be too correlated to one another. Multivariate assumptions normality and homogeneity of covariances can be eyeballed and found to be met for the most part. For the ANOVA tests, all of the assumptions were found to be met. The sample was large and random and contained independent samples. Additionally, the equal variance assumption can be assumed to have been met.</em></p>
-<p><em>A MANOVA was conducted in order to determine the effect of Faction (Alliance and Horde) on three dependent variables (Damage done, Healing done, and Honor awarded). Significant differences were found among the two factions on the three dependent measures (Pillai trace = 0.007, pseudo F (3, 3722) = 8.7557, p-value = 0.751e-06). With this, we are able to reject the null hypothesis. ANOVA tests for each variable were performed in order to determine which of dependent variables were significant. The univariate ANOVAs for Healing done and Honor awarded were found to be significant (F(1,3724) = 5.5098, p-value = 0.01896 and F(1, 3724) = 14.31, p-value = 0.0001574), respectively. The Bonferroni method for controlling Type I error rates for multiple comparisons was used, and the probability of at least one Type I error from performing 6 tests was found to be 26.49%. Post hoc tests were then performed and the results were all significant when compared to an alpha level of 0.05; however, because 6 tests were performed, an adjusted alpha level of 0.00833 will be used to conclude these post hoc tests. In conclusion, only Honor awarded significantly differed between the Alliance and the Horde.</em></p>
+<p>There are 6 assumptions for a MANOVA test and because there are so many it is difficult to entirely test or meet all of them; however, most of them can be assumed to be met for this dataset. The samples were random and independent of one another, there are no extreme univariate or multivariate outliers because those players can only be underperformers, which are generally removed from matches within a minute of being idle, so their data will not be included at the end. The dependent variables were not found to be too correlated to one another. Multivariate assumptions normality and homogeneity of covariances can be eyeballed and found to be met for the most part. For the ANOVA tests, all of the assumptions were found to be met. The sample was large and random and contained independent samples. Additionally, the equal variance assumption can be assumed to have been met.</p>
+<p>A MANOVA was conducted in order to determine the effect of Faction (Alliance and Horde) on three dependent variables (Damage done, Healing done, and Honor awarded). Significant differences were found among the two factions on the three dependent measures (Pillai trace = 0.007, pseudo F (3, 3722) = 8.7557, p-value = 0.751e-06). With this, we are able to reject the null hypothesis. ANOVA tests for each variable were performed in order to determine which of dependent variables were significant. The univariate ANOVAs for Healing done and Honor awarded were found to be significant (F(1,3724) = 5.5098, p-value = 0.01896 and F(1, 3724) = 14.31, p-value = 0.0001574), respectively. The Bonferroni method for controlling Type I error rates for multiple comparisons was used, and the probability of at least one Type I error from performing 6 tests was found to be 26.49%. Post hoc tests were then performed and the results were all significant when compared to an alpha level of 0.05; however, because 6 tests were performed, an adjusted alpha level of 0.00833 will be used to conclude these post hoc tests. In conclusion, only Honor awarded significantly differed between the Alliance and the Horde.</p>
 <hr />
+</div>
 <div id="performing-a-randomization-test" class="section level3">
 <h3>Performing a Randomization Test:</h3>
-<p><em>The randomization test that I will be performing will be a two-tailed t-test. I want to determine whether the two factions yield the same total healing done on average in a battleground.</em></p>
-<p><em><strong>My hypotheses for my two-tailed t-test:</strong></em></p>
-<p><em>Null Hypothesis: The total average healing done in a battleground will not differ between the two factions (Alliance and Horde).</em></p>
-<p><em>Alternative Hypothesis: The total average healing done in a battleground does differ between the two factions (Alliance and Horde).</em></p>
+<p>The randomization test that I will be performing will be a two-tailed t-test. I want to determine whether the two factions yield the same total healing done on average in a battleground.</p>
+<p><strong>My hypotheses for my two-tailed t-test:</strong></p>
+<p>Null Hypothesis: The total average healing done in a battleground will not differ between the two factions (Alliance and Horde).</p>
+<p>Alternative Hypothesis: The total average healing done in a battleground does differ between the two factions (Alliance and Horde).</p>
 <pre class="r"><code># Preparing the data
 wowdata &lt;- wowdata %&gt;% mutate(Faction = ifelse(Faction == &quot;Alliance&quot;, 
     1, 0))
@@ -146,7 +152,7 @@ for (i in 1:5000) {
 }
 
 mean(rand_dist &gt; 2888.832) * 2</code></pre>
-<pre><code>## [1] 0.014</code></pre>
+<pre><code>## [1] 0.0184</code></pre>
 <pre class="r"><code># Graphing
 {
     hist(rand_dist, main = &quot;&quot;, ylab = &quot;&quot;)
@@ -156,10 +162,12 @@ mean(rand_dist &gt; 2888.832) * 2</code></pre>
 <pre class="r"><code>data.frame(rand_dist) %&gt;% ggplot(aes(rand_dist)) + geom_histogram(aes(y = ..density..), 
     bins = 30) + stat_function(fun = dt, geom = &quot;line&quot;)</code></pre>
 <p><img src="/project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
-<p><em>A two-tailed t-test was performed and a p-value of 0.01893 was obtained. The two factions do not yield the same healing done on average per battleground; the Alliance had an average healing done total of 24972.97 and the Horde had an average healing done total of 27861.80, revealing that the Horde generally yield more healing done per battleground. When generating a random distribution of 5000 mean differences on randomized data using a loop for the original healing done data, the two-tailed p-value came out to be 0.0188, which gives me the same conclusion as the parametric t-test done prior, that the mean healing done totals differ between the Alliance and the Horde.</em></p>
+<p>A two-tailed t-test was performed and a p-value of 0.01893 was obtained. The two factions do not yield the same healing done on average per battleground; the Alliance had an average healing done total of 24972.97 and the Horde had an average healing done total of 27861.80, revealing that the Horde generally yield more healing done per battleground. When generating a random distribution of 5000 mean differences on randomized data using a loop for the original healing done data, the two-tailed p-value came out to be 0.0188, which gives me the same conclusion as the parametric t-test done prior, that the mean healing done totals differ between the Alliance and the Horde.</p>
 <hr />
-<p>###Building a Multiple Regression Model:</p>
-<p><em>I will be building a model that will allow me to predict how much Honor is awarded to the player based on their Faction and Honorable kills. The variable Honorable kills will be mean centered because it is a numeric variable and mean centering it will allow for more meaningful interpretation.</em></p>
+</div>
+<div id="building-a-multiple-regression-model" class="section level3">
+<h3>Building a Multiple Regression Model:</h3>
+<p>I will be building a model that will allow me to predict how much Honor is awarded to the player based on their Faction and Honorable kills. The variable Honorable kills will be mean centered because it is a numeric variable and mean centering it will allow for more meaningful interpretation.</p>
 <pre class="r"><code># Reloading data
 wowdata &lt;- read.csv(&quot;C:/users/njare/Desktop/website/content/wowbgs.csv&quot;)
 colnames(wowdata) &lt;- c(&quot;Battleground&quot;, &quot;Code&quot;, &quot;Faction&quot;, &quot;Class&quot;, 
@@ -259,14 +267,16 @@ coeftest(fit)[, 1:4]  #Normal-theory SEs</code></pre>
 ## FactionHorde                   -68.601647  5.8959626 -11.63536  9.226256e-31
 ## Honorable_kills_c                9.402382  0.2852432  32.96269 2.676213e-209
 ## FactionHorde:Honorable_kills_c  -4.528455  0.3529897 -12.82886  6.762487e-37</code></pre>
-<p><em>Honorable kills = 0 does not have a reasonable interpretation because it means that the player was idle or threw the match and was not yet removed from the game, so by centering Honorable kills, I am able to yield the difference in honor awarded for Horde players at Honorable kills (centered) = 0 –&gt; Honorable kills = 26.42056. Predicted honor awarded to a player controlling for Faction and Honorable kills would be 444.1682 honor points. Holding Honorable kills constant, players earn 68.6016 less honor points for being Horde. Holding Faction constant, players earn 9.4024 more honor points per 1 unit increase in Honorable kills. The slope for Honor awarded for Horde and Alliance are significantly different.</em></p>
-<p><em>A few tests were ran in order to check the assumptions of linearity, normality, and homoskedasticity. The graphs and the p-value from the BP test reveal that the assumption of linearity and homoskedasticity were not met and the null hypothesis of homoskedasticity was rejected. Additionally, after running a KS test, normality does not seem to be met either. Because the null hypothesis was rejected, a regression with robust standard errors was then computed with the function coeftest(). This resulted in changes in the t-values for the coefficients from 111.61, -12.23, 38.06, and -12.9 to 92.314, -11.635, 32.963, and -12.829, respectively. However, the p-values still remained less than 2.2e-16. Overall, the model explains for 33.18% of the variation in honor awarded per player.</em></p>
-<p><strong>Note:</strong> <em>In this portion of the discussion, all values were rounded to 2 decimal points.</em></p>
-<p><em>I then ran the same regression, but this time I computed the bootstrapped standard errors. Inititally, in the normal theory SEs, the values for the coefficients were found to be 3.98, 5.61, 0.25, and 0.35. These SEs were all (except for the interaction SE) found to increase after running the coeftest() function which yielded the robust SEs; the values for the coefficients were then found to be 4.81, 5.90, 0.29, and 0.35. The p-values were also found to increase from the normal theory SEs to the robust SEs, but the p-values were still less than 2.2e-16. Lastly, for the bootstrapped standard errors, I received the values 5.62, 6.66, 0.36, and 0.43. Comparing these bootstrapped SEs to the robust SEs, these values were found to be larger.</em></p>
+<p>Honorable kills = 0 does not have a reasonable interpretation because it means that the player was idle or threw the match and was not yet removed from the game, so by centering Honorable kills, I am able to yield the difference in honor awarded for Horde players at Honorable kills (centered) = 0 –&gt; Honorable kills = 26.42056. Predicted honor awarded to a player controlling for Faction and Honorable kills would be 444.1682 honor points. Holding Honorable kills constant, players earn 68.6016 less honor points for being Horde. Holding Faction constant, players earn 9.4024 more honor points per 1 unit increase in Honorable kills. The slope for Honor awarded for Horde and Alliance are significantly different.</p>
+<p>A few tests were ran in order to check the assumptions of linearity, normality, and homoskedasticity. The graphs and the p-value from the BP test reveal that the assumption of linearity and homoskedasticity were not met and the null hypothesis of homoskedasticity was rejected. Additionally, after running a KS test, normality does not seem to be met either. Because the null hypothesis was rejected, a regression with robust standard errors was then computed with the function coeftest(). This resulted in changes in the t-values for the coefficients from 111.61, -12.23, 38.06, and -12.9 to 92.314, -11.635, 32.963, and -12.829, respectively. However, the p-values still remained less than 2.2e-16. Overall, the model explains for 33.18% of the variation in honor awarded per player.</p>
+<p><strong>Note:</strong> In this portion of the discussion, all values were rounded to 2 decimal points.</p>
+<p>I then ran the same regression, but this time I computed the bootstrapped standard errors. Inititally, in the normal theory SEs, the values for the coefficients were found to be 3.98, 5.61, 0.25, and 0.35. These SEs were all (except for the interaction SE) found to increase after running the coeftest() function which yielded the robust SEs; the values for the coefficients were then found to be 4.81, 5.90, 0.29, and 0.35. The p-values were also found to increase from the normal theory SEs to the robust SEs, but the p-values were still less than 2.2e-16. Lastly, for the bootstrapped standard errors, I received the values 5.62, 6.66, 0.36, and 0.43. Comparing these bootstrapped SEs to the robust SEs, these values were found to be larger.</p>
 <hr />
-<p>###Performing a Logistic Regression:</p>
-<p><em>I did not have a binary variable in my data, so I converted my categorical variable, Win, to a binary numeric and overwrote data with this new column name. Now, Lose = 0 and Win = 1. Additionally, there was a column for lose which contains the same information, so I just chose to remove it to make the data look cleaner.</em></p>
-<p><em>I will now be performing a logistic regression model in order to predict whether a player will win or lose from the three explanatory variables, Honor awarded, Honorable kills, and Damage done.</em></p>
+</div>
+<div id="performing-a-logistic-regression" class="section level3">
+<h3>Performing a Logistic Regression:</h3>
+<p>I did not have a binary variable in my data, so I converted my categorical variable, Win, to a binary numeric and overwrote data with this new column name. Now, Lose = 0 and Win = 1. Additionally, there was a column for lose which contains the same information, so I just chose to remove it to make the data look cleaner.</p>
+<p>I will now be performing a logistic regression model in order to predict whether a player will win or lose from the three explanatory variables, Honor awarded, Honorable kills, and Damage done.</p>
 <pre class="r"><code># Preparing the data
 wowdata[is.na(wowdata)] &lt;- 0
 wowdata &lt;- wowdata %&gt;% dplyr::select(-Lose)
@@ -366,10 +376,12 @@ for (i in 1:k) {
 apply(diags, 2, mean)</code></pre>
 <pre><code>##       acc      sens      spec       ppv       auc 
 ## 0.9060617 0.9079202 0.9034370 0.9073545 0.9725346</code></pre>
-<p><em>After running the logistic regression model, it was found that honor awarded and damage done are decent predictors for whether a player will win or not (both of the p-values were less than 0.05); however, honorable kills by itself is not a good predictor of whether a player will win or lose. The predicted odds of winning a battleground when honor awarded = honorable kills = damage done = 0 is 0.00011. Holding honorable kills and damage done constant, going up 1 honor awarded multiplies the odds by a factor of 1.02611. Holding honor awarded and damage done constant, going up 1 honorable kill multiplies the odds by a factor of 1.00796. Holding honor awarded and honorable kills constant, going up 1 damage done multiplies the odds by a factor of 0.99998. It appears that an increase in both honor awarded and honorable kills increases one’s odds in winning; however, the same cannot be said for an increase for damage done. When computing the confusion matrix, the accuracy was found to be 0.906, the sensitivity (TPR) was found to be 0.907, the specificity (TNR) was found to be 0.905, and the recall (PPV) was found to be 0.908. After generating a ROC curve, I was able to calculate the AUC for this model. I received a value of 0.973, which is a great value and reveals that honor awarded, honorable kills, and damage done are good predictors for whether a player will win a battleground or not. I then performed a 10-fold CV. The average out-of-sample accuracy was found to be 0.907, the sensitivity was found to be 0.907, and the recall was found to be 0.909.</em></p>
+<p>After running the logistic regression model, it was found that honor awarded and damage done are decent predictors for whether a player will win or not (both of the p-values were less than 0.05); however, honorable kills by itself is not a good predictor of whether a player will win or lose. The predicted odds of winning a battleground when honor awarded = honorable kills = damage done = 0 is 0.00011. Holding honorable kills and damage done constant, going up 1 honor awarded multiplies the odds by a factor of 1.02611. Holding honor awarded and damage done constant, going up 1 honorable kill multiplies the odds by a factor of 1.00796. Holding honor awarded and honorable kills constant, going up 1 damage done multiplies the odds by a factor of 0.99998. It appears that an increase in both honor awarded and honorable kills increases one’s odds in winning; however, the same cannot be said for an increase for damage done. When computing the confusion matrix, the accuracy was found to be 0.906, the sensitivity (TPR) was found to be 0.907, the specificity (TNR) was found to be 0.905, and the recall (PPV) was found to be 0.908. After generating a ROC curve, I was able to calculate the AUC for this model. I received a value of 0.973, which is a great value and reveals that honor awarded, honorable kills, and damage done are good predictors for whether a player will win a battleground or not. I then performed a 10-fold CV. The average out-of-sample accuracy was found to be 0.907, the sensitivity was found to be 0.907, and the recall was found to be 0.909.</p>
 <hr />
-<p>###LASSO Regression:</p>
-<p><em>I will be performing a LASSO regression on the binary variable Win and all of the other variables that I am focusing on will act as predictors.</em></p>
+</div>
+<div id="lasso-regression" class="section level3">
+<h3>LASSO Regression:</h3>
+<p>I will be performing a LASSO regression on the binary variable Win and all of the other variables that I am focusing on will act as predictors.</p>
 <pre class="r"><code># Preparing the data:
 wowdata &lt;- wowdata %&gt;% dplyr::select(-1, -2, -4, -5, -6, -12, 
     -13, -14)
@@ -444,7 +456,7 @@ for (i in 1:k) {
 diags %&gt;% summarize_all(mean)</code></pre>
 <pre><code>##         acc     sens      spec       ppv       auc
 ## 1 0.9669867 0.965561 0.9679816 0.9694684 0.9924442</code></pre>
-<p><em>After running the LASSO, the variables that will be retained includes: Faction, Damage done, Healing done, and Honor awarded. These variables are the most important predictors of whether a player will Win their battleground or not. Honorable kills was not found to be significant. Using only the retained variables will allow me to get a model that makes accurate predictions. The accuracy was found to be 0.9669852, compared to the out-of-sample accuracy of my logistic regression was found to be 0.907. As one can see, this accuracy was significantly higher than the one previously found.</em></p>
+<p>After running the LASSO, the variables that will be retained includes: Faction, Damage done, Healing done, and Honor awarded. These variables are the most important predictors of whether a player will Win their battleground or not. Honorable kills was not found to be significant. Using only the retained variables will allow me to get a model that makes accurate predictions. The accuracy was found to be 0.9669852, compared to the out-of-sample accuracy of my logistic regression was found to be 0.907. As one can see, this accuracy was significantly higher than the one previously found.</p>
 <hr />
 <pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-w64-mingw32/x64 (64-bit)
@@ -486,7 +498,7 @@ diags %&gt;% summarize_all(mean)</code></pre>
 ## [53] vctrs_0.2.0      generics_0.0.2   iterators_1.0.12 tools_3.6.2     
 ## [57] glue_1.3.1       hms_0.5.2        yaml_2.2.0       colorspace_1.4-1
 ## [61] rvest_0.3.5      haven_2.2.0</code></pre>
-<pre><code>## [1] &quot;2019-12-15 00:32:18 CST&quot;</code></pre>
+<pre><code>## [1] &quot;2019-12-15 01:38:35 CST&quot;</code></pre>
 <pre><code>##           sysname           release           version          nodename 
 ##         &quot;Windows&quot;          &quot;10 x64&quot;     &quot;build 17763&quot; &quot;LAPTOP-C6CPOL32&quot; 
 ##           machine             login              user    effective_user 
