@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576385436711.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "488676724",
+    "id" : "E5833B3",
+    "lastKnownWriteTime" : 1576385483,
+    "last_content_update" : 1576385483996,
+    "path" : "C:/Users/njare/Desktop/website/content/blog/2019-12-14-python-blog.Rmd",
+    "project_path" : "content/blog/2019-12-14-python-blog.Rmd",
+    "properties" : {
+        "cursorPosition" : "11,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

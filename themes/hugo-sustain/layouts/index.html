@@ -1,0 +1,22 @@
+{{ partial "head" . }}
+  <body>
+    <div id="wrap">
+      {{ partial "header" . }}
+      <section id="about">
+        <div class="container">
+        <div class="avatar">
+          <img class="img-circle" src="{{ .Site.BaseURL }}img/{{ .Site.Params.avatar }}" alt="Responsive image" height=300px width=300px >
+        </div>
+        <h1> <strong>{{ .Site.Params.author }}</strong> </h1>
+        <h4>I am a pre-med student with a BSA in Biology. </h4>
+        <h4>I enjoy doing research and being involved in all things science! </h4>
+        <h4>Additionally, I am a tea fanatic and avid watcher of documentaries. </h4>
+        <h4>For more information about me, take a peek at my <a href="myresume.pdf">resume</a>. </h4>
+        <h4> Do feel free to send me an email <a href="mailto:{{ .Site.Params.Social.Email }}">here</a>!</h4>
+        {{ partial "social.html" . }}
+        </div>
+      </section>
+    </div>
+    {{ partial "footer" . }}
+  </body>
+</html>
