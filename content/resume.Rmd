@@ -36,6 +36,6 @@ I am able to fluently speak English and Vietnamese, and have an intermediate-lev
 
 My email is: anguyen0107@gmail.com; do feel free to send me any questions/concerns. 
 
-You can also click <a href="mailto:{{ .Site.Params.Social.Email }}">here</a>!
+You can also click <a href="mailto:{{ anguyen0107@gmail.com }}">here</a>!
 
 
