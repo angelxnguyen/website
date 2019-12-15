@@ -10,13 +10,13 @@ library(knitr)
 opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
 ```
 
-### Introduction:
+## Introduction:
 
 In this project, I will be modeling, testing, and making predictions on a dataset created from observations on the game, __World of Warcraft__, which is a MMORPG created by __Blizzard__. This dataset contains information about battlegrounds, which are timed matches in an instanced area where players are able to compete against other players (PvP). Players are placed in teams on the basis of the faction that they belong to, the Alliance or the Horde, and their character's level, so the matches consist of similar team compositions competing against one another. At the end of each battleground, there is a summary containing information for each of the players for both factions. I will be specifically looking at the numeric variables: __Damage done, Healing done, Honorable kills, and Honor awarded__ and the categorical variable: __Faction and Win__.
 
 ---
 
-### Data Preparation:
+## Data Preparation:
 
 I will be preloading all of the packages I will be using in this project. Additionally, to prepare the data and make it easier to understand, I renamed the abbreviations in the columns with their full names.
 
@@ -38,7 +38,7 @@ colnames(wowdata)<-c('Battleground','Code','Faction','Class','Num_mortal_kills',
 
 ---
 
-### Performing a MANOVA Test:
+## Performing a MANOVA Test:
 
 I want to simultaneously determine whether Damage done, Healing done, and Honor awarded differ by Faction. I am doing this because I want to see if there is a difference in perfomance based on a player's Faction. If the MANOVA results in significant findings, ANOVA tests and post hoc tests will be ran to determine where the significance lies in the dependent variables.
 
@@ -72,7 +72,7 @@ A MANOVA was conducted in order to determine the effect of Faction (Alliance and
 
 ---
 
-### Performing a Randomization Test:
+## Performing a Randomization Test:
 
 The randomization test that I will be performing will be a two-tailed t-test. I want to determine whether the two factions yield the same total healing done on average in a battleground.
 
@@ -108,7 +108,7 @@ A two-tailed t-test was performed and a p-value of 0.01893 was obtained. The two
 
 ---
 
-### Building a Multiple Regression Model:
+## Building a Multiple Regression Model:
 
 I will be building a model that will allow me to predict how much Honor is awarded to the player based on their Faction and Honorable kills. The variable Honorable kills will be mean centered because it is a numeric variable and mean centering it will allow for more meaningful interpretation.
 
@@ -163,7 +163,7 @@ I then ran the same regression, but this time I computed the bootstrapped standa
 
 ---
 
-### Performing a Logistic Regression:
+## Performing a Logistic Regression:
 
 I did not have a binary variable in my data, so I converted my categorical variable, Win, to a binary numeric and overwrote data with this new column name. Now, Lose = 0 and Win = 1. Additionally, there was a column for lose which contains the same information, so I just chose to remove it to make the data look cleaner.
 
@@ -241,7 +241,7 @@ After running the logistic regression model, it was found that honor awarded and
 
 ---
 
-### LASSO Regression:
+## LASSO Regression:
 
 I will be performing a LASSO regression on the binary variable Win and all of the other variables that I am focusing on will act as predictors.
 

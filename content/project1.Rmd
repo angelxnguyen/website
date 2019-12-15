@@ -12,7 +12,7 @@ library(knitr)
 opts_chunk$set(fig.align="center", fig.height=5, fig.width=8)
 ```
 
-### Introduction for this Data Analysis Project:
+## Introduction for this Data Analysis Project:
 
 In this project, I will be analyzing two datasets, **lifeexpect** and **happiness2015**. The dataset **lifeexpect** comes from the World Health Organization (WHO), and it contains information on global life expectancies. In addition, it contains a number of health variables contributing to the life expectancies. A few of these are GDP, diseases, schooling, and resources. The second dataset **happiness2015** comes from The World Happiness Report, and it consists of information on global happiness in addition to variables contributing to this happiness value. A few of these variables are scores for freedom, generosity, family, and trust in government.
 
@@ -20,7 +20,7 @@ I chose to conduct an analysis on these two datasets because I wanted to determi
 
 ---
 
-### Introducing the Two Datasets
+## Introducing the Two Datasets
 
 ```{R}
 
@@ -36,7 +36,7 @@ The dataset 'lifeexpect' contained information from the years 2000 to 2015, but 
 
 ---
 
-### Joining the Two Datasets
+## Joining the Two Datasets
 
 ```{R}
 joined <- life2015%>% inner_join(happiness2015, by="Country")
@@ -47,7 +47,7 @@ I decided to utilize the join function, inner_join(), because it would drop any 
 
 ---
 
-### Generating Summary Statistics
+## Generating Summary Statistics
 
 ```{R}
 
@@ -88,7 +88,7 @@ When grouping by the region that each country belongs to, one can delve deeper a
 
 ---
 
-### Plotting the Joined Dataset
+## Plotting the Joined Dataset
 
 ```{R}
 library(ggplot2)
@@ -127,7 +127,7 @@ In order to look at the mean life expectancies of each region and its following 
 
 ---
 
-### Clustering the Data
+## Clustering the Data
 
 ```{R}
 happyxlife <- joined.1 %>% dplyr::select(Life.expectancy, Happiness.Score)
@@ -146,6 +146,6 @@ Looking at this kmeans plot above, there are 10 clusters. Clustering is used in 
 
 ---
 
-### Conclusion
+## Conclusion
 
 In conclusion, when looking at life expectancy values and happiness scores across different regions of the world, it is apparent that countries with longer life expectancy generally have higher happiness scores. There seems to be great variation between each of the regions for both life expectancy and happiness scores. This could be due to a number of reasons such as the economy, eradication of diseases, government trust/presence; however, further testing would need to be performed to determine what affects life expectancy and happiness to vary around the world.
