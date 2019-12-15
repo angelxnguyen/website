@@ -9,9 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+![](/./resume_files/angel.jpg){width=250px height=375px}
+
 ## Background
 
-I graduated from the University of Texas at Austin with a Bachelor of Science and Arts in Biology. I am a pre-med student with hopes of attending medical school in my near future. Aside from school work, I am quite involved with a local animal shelter in Austin, TX. I volunteer and foster for Austin Pets Alive! and it is so rewarding. In my free time, I love reading, watching documentaries, and playing video games. 
+I graduated from the University of Texas at Austin with a Bachelor of Science and Arts in Biology. I am a pre-med student with hopes of attending medical school in my near future. Aside from school work, I am quite involved with a local animal shelter in Austin, TX. I volunteer and foster for Austin Pets Alive! and it is so rewarding. I am a huge advocate for adopting animals and have two of my own! I have a pup named Maximus and a kitty named Maeby. In my free time, I love reading, watching documentaries, and playing video games. 
 
 ---
 

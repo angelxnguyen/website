@@ -8,5 +8,12 @@ tags: []
 description: ''
 ---
 
-##Hey what's up!
+![](/blog/2019-12-14-python-blog_files/pythonimage.jpg)
+
+---
+
+## Introduction:
+
+In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if  you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post. 
+
 

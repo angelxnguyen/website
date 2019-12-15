@@ -1,7 +1,7 @@
 ---
 title: "World of Warcraft: Battlegrounds Analysis"
 author: "Tien Nguyen TN7898"
-date: "11/25/2019"
+date: "2019-11-25"
 output: html_document
 ---
 
@@ -9,6 +9,8 @@ output: html_document
 library(knitr)
 opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
 ```
+
+![](/./project2_files/alivshorde.jpg){width=300px height=100px}
 
 ## Introduction:
 

@@ -6,7 +6,7 @@ title: "Projects"
 showpagemeta: false
 ---
 # __Projects__ 
-
+---
 ### Below are some projects that I have completed:
 
 - [Does Happiness Affect Life Expectancy?](/Project1/)
