@@ -1,0 +1,290 @@
+---
+title: "Project 2"
+author: "Tien Nguyen TN7898"
+date: "11/25/2019"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+
+###Introduction:
+
+*In this project, I will be modeling, testing, and making predictions on a dataset created from observations on the game, __World of Warcraft__, which is a MMORPG created by __Blizzard__. This dataset contains information about battlegrounds, which are timed matches in an instanced area where players are able to compete against other players (PvP). Players are placed in teams on the basis of the faction that they belong to, the Alliance or the Horde, and their character's level, so the matches consist of similar team compositions competing against one another. At the end of each battleground, there is a summary containing information for each of the players for both factions. I will be specifically looking at the numeric variables: __Damage done, Healing done, Honorable kills, and Honor awarded__ and the categorical variable: __Faction and Win__.*
+
+---
+
+###Data Preparation:
+
+*I will be preloading all of the packages I will be using in this project. Additionally, to prepare the data and make it easier to understand, I renamed the abbreviations in the columns with their full names.*
+
+```{R}
+#Loading packages
+library(ggplot2)
+library(dplyr)
+library(sandwich)
+library(lmtest)
+library(tidyverse)
+library(MASS)
+library(plotROC)
+library(glmnet)
+
+#Loading data
+wowdata <- read.csv("C:/users/njare/Desktop/website/content/wowbgs.csv")
+colnames(wowdata)<-c('Battleground','Code','Faction','Class','Num_mortal_kills','Num_deaths','Honorable_kills','Damage_done','Healing_done','Honor_awarded','Win','Lose','Class_speciality','Bonus_event')
+```
+
+---
+
+###Performing a MANOVA Test:
+
+*I want to simultaneously determine whether Damage done, Healing done, and Honor awarded differ by Faction. I am doing this because I want to see if there is a difference in perfomance based on a player's Faction. If the MANOVA results in significant findings, ANOVA tests and post hoc tests will be ran to determine where the significance lies in the dependent variables.*
+
+*__My hypotheses for my MANOVA test:__*
+
+*Null Hypothesis: For each of the dependent variables (Damage done, Healing done, and Honor awarded), the means of each Faction are equal.*
+
+*Alternative Hypothesis: For at least one dependent variable (Damage done, Healing done, and Honor awarded), at least one Faction mean is different.*
+
+```{R}
+#Eyeball testing the assumption for homogeneity of covariances.
+covmats<-wowdata%>%group_by(Faction)%>%do(covs=cov(.[8:10]))
+for(i in 1:3){print(covmats$covs[i])}
+
+man<-manova(cbind(Damage_done,Healing_done,Honor_awarded)~Faction, data=wowdata)
+summary(man) #Signigicant results.
+
+summary.aov(man) #Healing done and Honor awarded have significant results.
+
+pairwise.t.test(wowdata$Healing_done, wowdata$Faction, p.adj="none")
+pairwise.t.test(wowdata$Honor_awarded, wowdata$Faction, p.adj="none")
+
+1-(.95^6) #Probability of at least one type I error = 0.2649081.
+0.05/6 #Corrected significance level = 0.008333333.
+
+```
+
+*There are 6 assumptions for a MANOVA test and because there are so many it is difficult to entirely test or meet all of them; however, most of them can be assumed to be met for this dataset. The samples were random and independent of one another, there are no extreme univariate or multivariate outliers because those players can only be underperformers, which are generally removed from matches within a minute of being idle, so their data will not be included at the end. The dependent variables were not found to be too correlated to one another. Multivariate assumptions normality and homogeneity of covariances can be eyeballed and found to be met for the most part. For the ANOVA tests, all of the assumptions were found to be met. The sample was large and random and contained independent samples. Additionally, the equal variance assumption can be assumed to have been met.*
+
+*A MANOVA was conducted in order to determine the effect of Faction (Alliance and Horde) on three dependent variables (Damage done, Healing done, and Honor awarded). Significant differences were found among the two factions on the three dependent measures (Pillai trace = 0.007, pseudo F (3, 3722) = 8.7557, p-value = 0.751e-06). With this, we are able to reject the null hypothesis. ANOVA tests for each variable were performed in order to determine which of dependent variables were significant. The univariate ANOVAs for Healing done and Honor awarded were found to be significant (F(1,3724) = 5.5098, p-value = 0.01896 and F(1, 3724) = 14.31, p-value = 0.0001574), respectively. The Bonferroni method for controlling Type I error rates for multiple comparisons was used, and the probability of at least one Type I error from performing 6 tests was found to be 26.49%. Post hoc tests were then performed and the results were all significant when compared to an alpha level of 0.05; however, because 6 tests were performed, an adjusted alpha level of 0.00833 will be used to conclude these post hoc tests. In conclusion, only Honor awarded significantly differed between the Alliance and the Horde.*
+
+---
+
+### Performing a Randomization Test:
+
+*The randomization test that I will be performing will be a two-tailed t-test. I want to determine whether the two factions yield the same total healing done on average in a battleground.*
+
+*__My hypotheses for my two-tailed t-test:__*
+
+*Null Hypothesis: The total average healing done in a battleground will not differ between the two factions (Alliance and Horde).*
+
+*Alternative Hypothesis: The total average healing done in a battleground does differ between the two factions (Alliance and Horde).*
+
+```{R}
+#Preparing the data
+wowdata<-wowdata%>%mutate(Faction=ifelse(Faction=="Alliance",1,0))
+
+t.test(data=wowdata, Healing_done~Faction)
+
+heal <- wowdata %>% dplyr::select(3,9)
+heal %>% dplyr::group_by(Faction) %>% dplyr::summarise(means=mean(Healing_done))%>% dplyr::summarize(`mean_diff:`=diff(means))
+
+rand_dist<-vector()
+for(i in 1:5000){
+new<-data.frame(Healing_done=sample(heal$Healing_done),Faction=heal$Faction)
+rand_dist[i]<-mean(new[new$Faction=="1",]$Healing_done)-
+              mean(new[new$Faction=="0",]$Healing_done)}
+
+mean(rand_dist>2888.832)*2
+
+#Graphing
+{hist(rand_dist, main="", ylab=""); abline(v = 2888.832, col="red")}
+data.frame(rand_dist)%>%ggplot(aes(rand_dist))+geom_histogram(aes(y=..density..), bins=30)+stat_function(fun=dt, geom="line")
+```
+
+*A two-tailed t-test was performed and a p-value of 0.01893 was obtained. The two factions do not yield the same healing done on average per battleground; the Alliance had an average healing done total of 24972.97 and the Horde had an average healing done total of 27861.80, revealing that the Horde generally yield more healing done per battleground. When generating a random distribution of 5000 mean differences on randomized data using a loop for the original healing done data, the two-tailed p-value came out to be 0.0188, which gives me the same conclusion as the parametric t-test done prior, that the mean healing done totals differ between the Alliance and the Horde.*
+
+---
+
+###Building a Multiple Regression Model:
+
+*I will be building a model that will allow me to predict how much Honor is awarded to the player based on their Faction and Honorable kills. The variable Honorable kills will be mean centered because it is a numeric variable and mean centering it will allow for more meaningful interpretation.*
+
+```{R}
+#Reloading data
+wowdata <- read.csv("C:/users/njare/Desktop/website/content/wowbgs.csv")
+colnames(wowdata)<-c('Battleground','Code','Faction','Class','Num_mortal_kills','Num_deaths','Honorable_kills','Damage_done','Healing_done','Honor_awarded','Win','Lose','Class_speciality','Bonus_event')
+
+#Model
+mean(wowdata$Honorable_kills) #26.42056 honorable kills
+Honorable_kills_c <- wowdata$Honorable_kills-mean(wowdata$Honorable_kills)
+fit <- lm(Honor_awarded ~ Faction*Honorable_kills_c, data=wowdata)
+summary(fit)
+
+#Interaction plot
+wowdata %>% ggplot(aes(Honorable_kills_c,Honor_awarded, group=Faction)) + geom_point() + geom_smooth(method = 'lm', aes(color=Faction)) + theme(legend.position=c(.89,.145))+xlab("Honorable Kills Centered")+ylab("Honor Awarded")
+
+#Check Assumptions
+resids<-fit$residuals; fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col="red")
+bptest(fit) #p-value of less than 0.05. Homoskedasticity is not met.
+ggplot()+geom_histogram(aes(resids),bins=20)
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color='red')
+ks.test(resids, "pnorm", sd=sd(resids)) #Normality assumption does not appear to be met either.
+
+#Regression with robust standard errors
+coeftest(fit,vcov=vcovHC(fit))
+
+#Bootstrapped SEs
+set.seed(348)
+samp_distn<-replicate(5000, {
+ boot_dat<-boot_dat<-wowdata[sample(nrow(wowdata),replace=TRUE),]
+ fit1<-lm(Honor_awarded ~ Faction * Honorable_kills_c, data=boot_dat)
+ coef(fit1)
+})
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+#Compare SEs
+coeftest(fit)[,1:4] #Normal-theory SEs
+
+coeftest(fit, vcov=vcovHC(fit))[,1:4] #Robust SEs
+
+```
+
+*Honorable kills = 0 does not have a reasonable interpretation because it means that the player was idle or threw the match and was not yet removed from the game, so by centering Honorable kills, I am able to yield the difference in honor awarded for Horde players at Honorable kills (centered) = 0 --> Honorable kills = 26.42056. Predicted honor awarded to a player controlling for Faction and Honorable kills would be 444.1682 honor points. Holding Honorable kills constant, players earn 68.6016 less honor points for being Horde. Holding Faction constant, players earn 9.4024 more honor points per 1 unit increase in Honorable kills. The slope for Honor awarded for Horde and Alliance are significantly different.*
+
+*A few tests were ran in order to check the assumptions of linearity, normality, and homoskedasticity. The graphs and the p-value from the BP test reveal that the assumption of linearity and homoskedasticity were not met and the null hypothesis of homoskedasticity was rejected. Additionally, after running a KS test, normality does not seem to be met either. Because the null hypothesis was rejected, a regression with robust standard errors was then computed with the function coeftest(). This resulted in changes in the t-values for the coefficients from 111.61, -12.23, 38.06, and -12.9 to 92.314, -11.635, 32.963, and -12.829, respectively. However, the p-values still remained less than 2.2e-16. Overall, the model explains for 33.18% of the variation in honor awarded per player.*
+
+**Note:** *In this portion of the discussion, all values were rounded to 2 decimal points.*
+
+*I then ran the same regression, but this time I computed the bootstrapped standard errors. Inititally, in the normal theory SEs, the values for the coefficients were found to be 3.98, 5.61, 0.25, and 0.35. These SEs were all (except for the interaction SE) found to increase after running the coeftest() function which yielded the robust SEs; the values for the coefficients were then found to be 4.81, 5.90, 0.29, and 0.35. The p-values were also found to increase from the normal theory SEs to the robust SEs, but the p-values were still less than 2.2e-16. Lastly, for the bootstrapped standard errors, I received the values 5.62, 6.66, 0.36, and 0.43. Comparing these bootstrapped SEs to the robust SEs, these values were found to be larger.* 
+
+---
+
+###Performing a Logistic Regression:
+
+*I did not have a binary variable in my data, so I converted my categorical variable, Win, to a binary numeric and overwrote data with this new column name. Now, Lose = 0 and Win = 1. Additionally, there was a column for lose which contains the same information, so I just chose to remove it to make the data look cleaner.* 
+
+*I will now be performing a logistic regression model in order to predict whether a player will win or lose from the three explanatory variables, Honor awarded, Honorable kills, and Damage done.*
+
+```{R}
+#Preparing the data
+wowdata[is.na(wowdata)] <- 0
+wowdata <- wowdata %>% dplyr::select(-Lose)
+
+#Logistic regression model
+fit2<-glm(Win~Honor_awarded+Honorable_kills+Damage_done, data=wowdata, family="binomial")
+coeftest(fit2)
+
+#odds
+coef(fit2)%>%exp%>%round(5)%>%data.frame
+
+#Confusion Matrix
+prob<-predict(fit2, type="response")
+table(predict=as.numeric(prob>.5), truth=wowdata$Win) %>% addmargins
+(1663+1714)/3726 #accuracy
+1714/1889 #TPR
+1663/1837 #TNR
+1714/1888 #PPV
+
+#ROC and AUC
+ROCplot<-ggplot(wowdata)+geom_roc(aes(d=Win, m=prob), n.cuts=0) +geom_segment(aes(x=0, xend=1, y=0, yend=1), lty=2)
+ROCplot
+calc_auc(ROCplot)
+
+#Plot density
+wowdata$Win<-as.factor(wowdata$Win)
+wowdata$logit<-predict(fit2,type="link")
+wowdata%>%ggplot()+geom_density(aes(logit,color=Win,fill=Win), alpha=.4)+geom_vline(xintercept=0)+xlab("predictor (logit)")
+
+#Class_diag
+class_diag<-function(probs,truth){
+ tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+ acc=sum(diag(tab))/sum(tab)
+ sens=tab[2,2]/colSums(tab)[2]
+ spec=tab[1,1]/colSums(tab)[1]
+ ppv=tab[2,2]/rowSums(tab)[2]
+ if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+ #CALCULATE EXACT AUC
+ ord<-order(probs, decreasing=TRUE)
+ probs <- probs[ord]; truth <- truth[ord]
+ TPR=cumsum(truth)/max(1,sum(truth))
+ FPR=cumsum(!truth)/max(1,sum(!truth))
+ dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+ TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+ n <- length(TPR)
+ auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+ data.frame(acc,sens,spec,ppv,auc)
+}
+
+#10-fold CV
+set.seed(348)
+k=10
+data1<-wowdata[sample(nrow(wowdata)),]
+folds<-cut(seq(1:nrow(wowdata)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+ train<-data1[folds!=i,]
+ test<-data1[folds==i,]
+ truth<-test$Win
+ fit3<-glm(Win~Honor_awarded+Honorable_kills+Damage_done,data=train,family="binomial")
+ probs<-predict(fit3,newdata = test,type="response")
+ diags<-rbind(diags,class_diag(probs,truth))
+}
+apply(diags,2,mean)
+
+```
+
+*After running the logistic regression model, it was found that honor awarded and damage done are decent predictors for whether a player will win or not (both of the p-values were less than 0.05); however, honorable kills by itself is not a good predictor of whether a player will win or lose. The predicted odds of winning a battleground when honor awarded = honorable kills = damage done = 0 is 0.00011. Holding honorable kills and damage done constant, going up 1 honor awarded multiplies the odds by a factor of 1.02611. Holding honor awarded and damage done constant, going up 1 honorable kill multiplies the odds by a factor of 1.00796. Holding honor awarded and honorable kills constant, going up 1 damage done multiplies the odds by a factor of 0.99998. It appears that an increase in both honor awarded and honorable kills increases one's odds in winning; however, the same cannot be said for an increase for damage done. When computing the confusion matrix, the accuracy was found to be 0.906, the sensitivity (TPR) was found to be 0.907, the specificity (TNR) was found to be 0.905, and the recall (PPV) was found to be 0.908. After generating a ROC curve, I was able to calculate the AUC for this model. I received a value of 0.973, which is a great value and reveals that honor awarded, honorable kills, and damage done are good predictors for whether a player will win a battleground or not. I then performed a 10-fold CV. The average out-of-sample accuracy was found to be 0.907, the sensitivity was found to be 0.907, and the recall was found to be 0.909.*
+
+---
+
+###LASSO Regression:
+
+*I will be performing a LASSO regression on the binary variable Win and all of the other variables that I am focusing on will act as predictors.*
+
+```{R}
+#Preparing the data:
+wowdata <- wowdata %>% dplyr::select(-1,-2,-4,-5,-6,-12,-13,-14)
+
+#Performing LASSO
+fit4<-glm(Win~., data=wowdata, family="binomial")
+summary(fit4)
+y<-as.matrix(wowdata$Win)
+x<-model.matrix(fit4)[,-1]
+cv<-cv.glmnet(x,y, family="binomial")
+lasso<-glmnet(x,y, family="binomial",lambda=cv$lambda.1se)
+coef(lasso)
+pred<-predict(lasso, type = "response",x)
+table(as.numeric(pred>.5),y)%>%addmargins
+class_diag(pred,wowdata$Win)
+
+set.seed(348)
+k=10
+data2<-wowdata[sample(nrow(wowdata)),]
+folds<-cut(seq(1:nrow(wowdata)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+  train<-data2[folds!=i,]
+  test<-data2[folds==i,]
+  truth<-test$Win
+ fit5<-glm(Win~Faction+Damage_done+Healing_done+Honor_awarded,data=train,family="binomial")
+ probs<-predict(fit5,newdata = test,type="response")
+ preds<-ifelse(probs>.5,1,0)
+ diags<-rbind(diags,class_diag(probs,truth))
+}
+diags%>%summarize_all(mean)
+```
+
+*After running the LASSO, the variables that will be retained includes: Faction, Damage done, Healing done, and Honor awarded. These variables are the most important predictors of whether a player will Win their battleground or not. Honorable kills was not found to be significant. Using only the retained variables will allow me to get a model that makes accurate predictions. The accuracy was found to be 0.9669852, compared to the out-of-sample accuracy of my logistic regression was found to be 0.907. As one can see, this accuracy was significantly higher than the one previously found.*
+
+---
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```

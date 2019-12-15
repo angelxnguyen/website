@@ -1,0 +1,199 @@
+---
+title: "Project 1"
+author: "Tien Nguyen TN7898"
+date: "10/20/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+
+<p>###Introduction for this Data Analysis Project:</p>
+<p><em>In this project, I will be analyzing two datasets, <strong>lifeexpect</strong> and <strong>happiness2015</strong>. The dataset <strong>lifeexpect</strong> comes from the World Health Organization (WHO), and it contains information on global life expectancies. In addition, it contains a number of health variables contributing to the life expectancies. A few of these are GDP, diseases, schooling, and resources. The second dataset <strong>happiness2015</strong> comes from The World Happiness Report, and it consists of information on global happiness in addition to variables contributing to this happiness value. A few of these variables are scores for freedom, generosity, family, and trust in government.</em></p>
+<p><em>I chose to conduct an analysis on these two datasets because I wanted to determine whether there was a relationship between a country’s life expectancy and how happy its inhabitants are. I am predicting that countries with higher life expectancies will have higher scores of happiness. I will also be looking at the overall happiness and life expectancies of the regions that these countries belong to.</em></p>
+<hr />
+<p>###Introducing the Two Datasets</p>
+<pre class="r"><code>lifeexpect &lt;- read.csv(&quot;C:/Users/njare/Desktop/website/content/lifeexpect.csv&quot;)
+happiness2015 &lt;- read.csv(&quot;C:/users/njare/Desktop/website/content/happiness2015.csv&quot;)
+
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>life2015 &lt;- lifeexpect %&gt;% filter(Year &gt;= 2015)</code></pre>
+<p><em>The dataset ‘lifeexpect’ contained information from the years 2000 to 2015, but the dataset ‘happiness2015’ only contained information for the year 2015. I chose to only look at information for the year 2015 because of this. Additionally, both datasets were predominantly tidy to begin with.</em></p>
+<hr />
+<p>###Joining the Two Datasets</p>
+<pre class="r"><code>joined &lt;- life2015%&gt;% inner_join(happiness2015, by=&quot;Country&quot;)</code></pre>
+<pre><code>## Warning: Column `Country` joining factors with different levels, coercing to
+## character vector</code></pre>
+<p><em>I decided to utilize the join function, inner_join(), because it would drop any of the rows in either dataset without a match, keeping only the rows with matches on the ID variable that I chose, which was ‘Country’. This is why some of the countries did not make it to the ‘joined’ dataset. Only the Countries found in both of the datasets would make it to the ‘joined’ dataset, 135 countries. Additionally, I did not want to introduce any new NAs, so this was the join function that I went with.</em></p>
+<hr />
+<p>###Generating Summary Statistics</p>
+<pre class="r"><code>library(dplyr)
+require(MASS)</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre class="r"><code>require(dplyr)
+
+joined.1&lt;-joined %&gt;% dplyr::select(Region, Country, Life.expectancy, Happiness.Score) %&gt;% arrange(Region) %&gt;% mutate(Happiness.score.cat = case_when(Happiness.Score&gt;6.667 ~ &quot;high&quot;, 3.333&lt;=Happiness.Score &amp; Happiness.Score&lt;=6.667 ~ &quot;med&quot;, Happiness.Score&lt;3.333 ~ &quot;low&quot;)) </code></pre>
+<p><em>I created a new dataset from <strong>joined</strong> and named it <strong>joined.1</strong>. This will allow me to only look at the variables of interest from the joined dataset, which are ‘Region’, ‘Country’, ‘Life.expectancy’, and ‘Happiness.Score’. Additionally, a categorical variable was added in order to categorize the variable ‘Happiness.Score’.</em></p>
+<pre class="r"><code>nrow(joined.1)</code></pre>
+<pre><code>## [1] 135</code></pre>
+<pre class="r"><code>summary(joined.1$Life.expectancy)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   51.00   66.05   74.50   72.07   77.55   88.00</code></pre>
+<pre class="r"><code>summary(joined.1$Happiness.Score)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   2.839   4.516   5.194   5.384   6.282   7.587</code></pre>
+<pre class="r"><code>summary(joined.1$Region)</code></pre>
+<pre><code>##       Australia and New Zealand      Central and Eastern Europe 
+##                               2                              24 
+##                    Eastern Asia     Latin America and Caribbean 
+##                               3                              20 
+## Middle East and Northern Africa                   North America 
+##                              17                               1 
+##               Southeastern Asia                   Southern Asia 
+##                               7                               7 
+##              Sub-Saharan Africa                  Western Europe 
+##                              35                              19</code></pre>
+<pre class="r"><code>joined.1 %&gt;% summarize_at(vars(Life.expectancy:Happiness.Score), sd)</code></pre>
+<pre><code>##   Life.expectancy Happiness.Score
+## 1        8.384836        1.159092</code></pre>
+<p><em>This joined dataset contains <strong>135 observations</strong>, which means it has information on 135 different countries. These 135 countries belong to <strong>10 different regions</strong>. Looking at the variable, ‘Life.expectancy’, the minimum value is <strong>51 years</strong>, the maximum value is <strong>88 years</strong>, the mean value is <strong>72.07 years</strong>, and the median value is <strong>74.50 years</strong>. The standard deviation for ‘Life.expectancy is <strong>8.38</strong>. Looking at the variable, ’Happiness.Score’, the minimum value is <strong>2.839/10</strong>, the maximum value is <strong>7.587/10</strong>, the mean value is <strong>5.384/10</strong>, and the median value is <strong>5.194/10</strong>. The standard deviation for ’Happiness.Score is <strong>1.16</strong>. These summary statistics are obtained when looking across all of the countries. This information is useful, but is not as detailed as I would like. To further investigate, I will group by region.</em></p>
+<pre class="r"><code>joined.1 %&gt;% group_by(Region) %&gt;% summarize_at(vars(Life.expectancy:Happiness.Score), min)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Region                          Life.expectancy Happiness.Score
+##    &lt;fct&gt;                                     &lt;dbl&gt;           &lt;dbl&gt;
+##  1 Australia and New Zealand                  81.6            7.28
+##  2 Central and Eastern Europe                 66.3            4.22
+##  3 Eastern Asia                               68.8            4.87
+##  4 Latin America and Caribbean                63.5            4.52
+##  5 Middle East and Northern Africa            65.7            4.08
+##  6 North America                              82.2            7.43
+##  7 Southeastern Asia                          66.6            3.82
+##  8 Southern Asia                              65              3.58
+##  9 Sub-Saharan Africa                         51              2.84
+## 10 Western Europe                             81              4.86</code></pre>
+<pre class="r"><code>joined.1 %&gt;% group_by(Region) %&gt;% summarize_at(vars(Life.expectancy:Happiness.Score), max)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Region                          Life.expectancy Happiness.Score
+##    &lt;fct&gt;                                     &lt;dbl&gt;           &lt;dbl&gt;
+##  1 Australia and New Zealand                  82.8            7.29
+##  2 Central and Eastern Europe                 88              6.00
+##  3 Eastern Asia                               83.7            5.99
+##  4 Latin America and Caribbean                85              7.23
+##  5 Middle East and Northern Africa            82.5            7.28
+##  6 North America                              82.2            7.43
+##  7 Southeastern Asia                          83.1            6.80
+##  8 Southern Asia                              74.9            5.25
+##  9 Sub-Saharan Africa                         74.6            5.48
+## 10 Western Europe                             86              7.59</code></pre>
+<pre class="r"><code>joined.1 %&gt;% group_by(Region) %&gt;% summarize_at(vars(Life.expectancy:Happiness.Score), mean)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Region                          Life.expectancy Happiness.Score
+##    &lt;fct&gt;                                     &lt;dbl&gt;           &lt;dbl&gt;
+##  1 Australia and New Zealand                  82.2            7.28
+##  2 Central and Eastern Europe                 74.7            5.25
+##  3 Eastern Asia                               76.2            5.33
+##  4 Latin America and Caribbean                75.0            6.12
+##  5 Middle East and Northern Africa            75.1            5.63
+##  6 North America                              82.2            7.43
+##  7 Southeastern Asia                          72.3            5.37
+##  8 Southern Asia                              69.3            4.58
+##  9 Sub-Saharan Africa                         60.9            4.20
+## 10 Western Europe                             82.3            6.73</code></pre>
+<pre class="r"><code>joined.1 %&gt;% group_by(Region) %&gt;% summarize_at(vars(Life.expectancy:Happiness.Score), sd)</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Region                          Life.expectancy Happiness.Score
+##    &lt;fct&gt;                                     &lt;dbl&gt;           &lt;dbl&gt;
+##  1 Australia and New Zealand                 0.849         0.00141
+##  2 Central and Eastern Europe                4.15          0.549  
+##  3 Eastern Asia                              7.45          0.581  
+##  4 Latin America and Caribbean               4.06          0.748  
+##  5 Middle East and Northern Africa           3.75          0.982  
+##  6 North America                           NaN           NaN      
+##  7 Southeastern Asia                         5.79          1.08   
+##  8 Southern Asia                             3.31          0.571  
+##  9 Sub-Saharan Africa                        5.03          0.622  
+## 10 Western Europe                            1.35          0.835</code></pre>
+<p><em>When grouping by the region that each country belongs to, one can delve deeper and can obtain even more information on the summary statistics of each region. I observed that the mean for both of these numeric variables was lowest for Sub-Saharan Africa and the highest mean was for both numeric variables was quite close for the following three regions: Australia and New Zealand, North America, and Western Europe.</em></p>
+<hr />
+<p>###Plotting the Joined Dataset</p>
+<pre class="r"><code>library(ggplot2)
+happiness_life &lt;- ggplot(data=joined.1,aes(x=Life.expectancy, y= Happiness.Score, color=Country))+geom_point()+theme(legend.position = &quot;none&quot;)
+print(happiness_life + labs(title= &quot;Happiness as a Function of Life Expectancy&quot;, y=&quot;Happiness Score&quot;, x = &quot;Life Expectancy (years)&quot;))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>There appears to be a <strong>positive relationship</strong> between a country’s life expectancy score and its happiness score. As life expectancy value increases, there also seems to be an increase in happiness score. Each country is an individual plot on this graph.</em></p>
+<pre class="r"><code>happiness_life &lt;- ggplot(data=joined.1,aes(x=Life.expectancy, y= Happiness.Score, color=Region))+geom_point()
+print(happiness_life + labs(title= &quot;Happiness as a Function of Life Expectancy&quot;, y=&quot;Happiness Score&quot;, x = &quot;Life Expectancy (years)&quot;))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>Again, I decided to plot happiness as a function of life expectancy; however, I colored the data points according to the various regions that they belong to. It appears that there is also a relationship between a country’s happiness score and life expectancy depending on what region it belongs to. The countries that belong to the region, Western Europe, appear to have higher life expectancies/happiness scores. The countries that belong to the region, Sub-Saharan Africa, appear to have lower life expectancies/happiness scores.</em></p>
+<pre class="r"><code>az&lt;- ggplot(data=joined, aes(x=Region, color=Region))+scale_y_continuous(name=&quot;Happiness Score&quot;)+geom_errorbar(aes(y=Happiness.Score),stat=&quot;summary&quot;,fun.data=&#39;mean_se&#39;, width=.2)+geom_point(color = &quot;black&quot;, size = 3, aes(y=Happiness.Score), stat=&quot;summary&quot;,fun.y=&quot;mean&quot;) 
+
+az + theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbar).</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>In order to look at the mean happiness score of each region and its following error, I built this plot. </em>Note<em>: The error bars for North America are missing. We can see the average max and min happiness values from this plot. The two highest appear to be Australia and New Zealand and North America. The two lowest seem to be Sub-Saharan Africa and Southern Asia.</em></p>
+<pre class="r"><code>za&lt;- ggplot(data=joined, aes(x=Region, color=Region))+scale_y_continuous(name=&quot;Life Expectancy (years)&quot;)+geom_errorbar(aes(y=Life.expectancy),stat=&quot;summary&quot;,fun.data=&#39;mean_se&#39;, width=.2)+geom_point(color = &quot;black&quot;, size = 3, aes(y=Life.expectancy), stat=&quot;summary&quot;,fun.y=&quot;mean&quot;) 
+
+za + theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbar).</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>In order to look at the mean life expectancies of each region and its following error, I built this plot. </em>Note<em>: The error bars for North America are missing. We can see the average max and min life expectancy values from this plot. The highest value is hard to determine because they are so close, but the three highest are Australia and New Zealand, North America, and Western Europe. The lowest seems to be Sub-Saharan Africa. Recalling the last graph, Sub-Saharan Africa appears to have the lowest value for both life expectancy and happiness score.</em></p>
+<hr />
+<p>###Clustering the Data</p>
+<pre class="r"><code>happyxlife &lt;- joined.1 %&gt;% dplyr::select(Life.expectancy, Happiness.Score)
+clusters &lt;- kmeans(happyxlife[,2,3], 10)
+
+kmeans1&lt;-happyxlife%&gt;%scale%&gt;%kmeans(10)
+kmeans1</code></pre>
+<pre><code>## K-means clustering with 10 clusters of sizes 27, 22, 5, 10, 8, 11, 4, 7, 18, 23
+## 
+## Cluster means:
+##    Life.expectancy Happiness.Score
+## 1        0.3952461      -0.4349575
+## 2        0.2615873       0.4454632
+## 3       -1.4782417      -1.8280728
+## 4       -0.8282588      -1.3539946
+## 5        1.4117968       0.6765612
+## 6        0.4995711       1.1369139
+## 7       -1.8962582      -0.3306932
+## 8       -2.0738748      -1.1420429
+## 9        1.1976205       1.6056413
+## 10      -0.7390191      -0.5599582
+## 
+## Clustering vector:
+##   [1]  9  9  1  1  1  2  1  1  2  1  1  1  2  1  1  2  1  2  1  1  2  5 10 10  1
+##  [26]  2  1  5 10  6  6  5  6  9  1  2  2  2 10  1  2  6  2  6  2  2  2  2  6  2
+##  [51]  2  1 10  9  1  2  1  2  1  6  6  6  1  1  6  4  9  4 10  2 10 10  9  6  4
+##  [76]  1 10 10 10 10  1  8  3 10  3  3  8  8  8  4 10 10  4 10  3 10  7 10  4  8
+## [101]  8 10  2  7  4  7  4  4  8 10 10  7  3  4 10 10  9  9  5  9  9  5  9  1  9
+## [126]  9  5  9  5  9  9  1  5  9  9
+## 
+## Within cluster sum of squares by cluster:
+##  [1] 4.6965796 2.1941560 0.4361989 0.7915147 1.0635475 0.7178647 0.3365313
+##  [8] 1.2734162 1.3103230 4.5304938
+##  (between_SS / total_SS =  93.5 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<pre class="r"><code>kmeansclust&lt;-happyxlife%&gt;%mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust%&gt;%ggplot(aes(Life.expectancy,Happiness.Score,color=cluster))+geom_point() + ggtitle(label = &quot;Kmeans&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><em>Looking at this kmeans plot above, there are 10 clusters. Clustering is used in order to group together data points which are most similar to one another. This could reveal that each of these clusters are a different region, which is similar to the plot that was produced previously when plotting happiness score against life expectancy and coloring the data points based on their respective regions.</em></p>
+<hr />
+<p>###Conclusion</p>
+<p><em>In conclusion, when looking at life expectancy values and happiness scores across different regions of the world, it is apparent that countries with longer life expectancy generally have higher happiness scores. There seems to be great variation between each of the regions for both life expectancy and happiness scores. This could be due to a number of reasons such as the economy, eradication of diseases, government trust/presence; however, further testing would need to be performed to determine what affects life expectancy and happiness to vary around the world.</em></p>
