@@ -9,6 +9,6 @@ showpagemeta: false
 
 Here are some projects I have been working on:
 
-- [Project 1](/Project1/)
+- [Does Happiness Affect Life Expectancy?](/Project1/)
 
-- [Project 2](/Project2/)
+- [World of Warcraft: Battlegrounds Analysis](/Project2/)
