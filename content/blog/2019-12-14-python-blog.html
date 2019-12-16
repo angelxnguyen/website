@@ -14,5 +14,61 @@ description: ''
 <hr />
 <div id="introduction" class="section level2">
 <h2>Introduction:</h2>
-<p>In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post.</p>
+<p>In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post such as using the package “Reticulate”, regular expression, and some things about python bioinformatics.</p>
+<hr />
+</div>
+<div id="calling-python-from-r-and-reticulate" class="section level2">
+<h2>Calling Python from R and Reticulate:</h2>
+<p>Firstly, I learned that through the package “Reticulate” in R, I am able to call on R and then allow Python and R to talk to each other. This means that I can use R to read and make adjustments to the data, then use this data with Python and matplotlib to then graph it. This is executed below:</p>
+<hr />
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(reticulate)
+head(faithful)</code></pre>
+<pre><code>##   eruptions waiting
+## 1     3.600      79
+## 2     1.800      54
+## 3     3.333      74
+## 4     2.283      62
+## 5     4.533      85
+## 6     2.883      55</code></pre>
+<pre class="r"><code>summary(faithful)</code></pre>
+<pre><code>##    eruptions        waiting    
+##  Min.   :1.600   Min.   :43.0  
+##  1st Qu.:2.163   1st Qu.:58.0  
+##  Median :4.000   Median :76.0  
+##  Mean   :3.488   Mean   :70.9  
+##  3rd Qu.:4.454   3rd Qu.:82.0  
+##  Max.   :5.100   Max.   :96.0</code></pre>
+<pre class="r"><code>faithful &lt;- mutate (faithful, eruptions_hr = eruptions/60)
+faithful &lt;- mutate (faithful, waiting_hr = waiting/60)
+head(faithful)</code></pre>
+<pre><code>##   eruptions waiting eruptions_hr waiting_hr
+## 1     3.600      79      0.06000  1.3166667
+## 2     1.800      54      0.03000  0.9000000
+## 3     3.333      74      0.05555  1.2333333
+## 4     2.283      62      0.03805  1.0333333
+## 5     4.533      85      0.07555  1.4166667
+## 6     2.883      55      0.04805  0.9166667</code></pre>
+<p><img src="/blog/2019-12-14-python-blog_files/python2.PNG" width="600" height="600" /></p>
+<p>I was able to use R in order to call in the data that I will be using, then with the package “dplyr”, I was able to create two new variables in the dataset, Faithful. I used the function mutate() in order to convert the two variables from minutes to hours. I then used this altered dataset with the two new variables (eruptions_hr and waiting_hr) in Python and was able to create a scatterplot with “reticulate” and “matplotlib”.</p>
+<hr />
+</div>
+<div id="regular-expression" class="section level2">
+<h2>Regular Expression</h2>
+<p>Regular expression can be used in order to search through a large paragraph or chunk of information and find specific patterns that you are looking for. It utilizes symbols with different meanings in order to search through large pieces of infomation and only yield matches in the output. A chart with some f these symbols and meanings are shown below:</p>
+<p><img src="/blog/2019-12-14-python-blog_files/chart.PNG" width="250" height="250" /></p>
+<p>This can be done with the function re.findall(). For the example below, there are a bunch of IP addresses in this string that you are searching for, but this would be exhausting to perform by hand. In the command below, we are telling python to look through string2 and look for a pattern that begins with a digit can have from 1-3 digits from 0-9, then to match any character, in this case a period. This will repeat 3 times and end with any set of 1-3 digits from 0-9.</p>
+<p><img src="/blog/2019-12-14-python-blog_files/python3.PNG" width="700" height="700" /></p>
+<hr />
+</div>
+<div id="section" class="section level2">
+<h2></h2>
 </div>

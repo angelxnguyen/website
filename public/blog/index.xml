@@ -17,7 +17,7 @@
       <pubDate>Sat, 14 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/python-blog/</guid>
-      <description>Introduction:In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post.</description>
+      <description>Introduction:In this blog, I will be writing about what I have learned in a Computational Biology course I took. Now if you were expecting a blog about snakes, I am sorry to disappoint; however, I promise this blog about the language Python is just as riveting! In this course, we were briefly introduced to Python. I will be including a few things that I found were interesting in this blog post such as using the package “Reticulate”, regular expression, and some things about python bioinformatics.</description>
     </item>
     
   </channel>

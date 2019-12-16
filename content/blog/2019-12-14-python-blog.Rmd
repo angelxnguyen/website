@@ -26,32 +26,36 @@ Firstly, I learned that through the package "Reticulate" in R, I am able to call
 
 ```{r}
 library(dplyr)
-faithful
+library(reticulate)
+head(faithful)
 summary(faithful)
 faithful <- mutate (faithful, eruptions_hr = eruptions/60)
 faithful <- mutate (faithful, waiting_hr = waiting/60)
 head(faithful)
 ```
 
-```{python}
-import matplotlib.pyplot as plt 
-plot1=plt.scatter(r.faithful["eruptions_hr"], r.faithful["waiting_hr"])
-plt.show(plot1)
-```
+![](/blog/2019-12-14-python-blog_files/python2.PNG){width=600px height=600px}
 
-I was able to use R in order to call in the data that I will be using, then with the package "dplyr", I was able to create two new variables in the dataset, Faithful. I used the function mutate() in order to convert the two variables from minutes to hours. I then used this altered dataset in Python and was able to create a scatterplot with "reticulate" and "matplotlib". 
+I was able to use R in order to call in the data that I will be using, then with the package "dplyr", I was able to create two new variables in the dataset, Faithful. I used the function mutate() in order to convert the two variables from minutes to hours. I then used this altered dataset with the two new variables (eruptions_hr and waiting_hr) in Python and was able to create a scatterplot with "reticulate" and "matplotlib". 
 
 ---
 
 ## Regular Expression
 
-Regular expression can be used in order to search through a large paragraph or chunk of information and find specific patterns that you are looking for. You can use 
+Regular expression can be used in order to search through a large paragraph or chunk of information and find specific patterns that you are looking for. It utilizes symbols with different meanings in order to search through large pieces of infomation and only yield matches in the output. A chart with some f these symbols and meanings are shown below:
 
-```{python}
+![](/blog/2019-12-14-python-blog_files/chart.PNG){width=250px height=250px}
+
+This can be done with the function re.findall(). For the example below, there are a bunch of IP addresses in this string that you are searching for, but this would be exhausting to perform by hand. In the command below, we are telling python to look through string2 and look for a pattern that begins with a digit can have from 1-3 digits from 0-9, then to match any character, in this case a period. This will repeat 3 times and end with any set of 1-3 digits from 0-9. 
 
 
-```
+![](/blog/2019-12-14-python-blog_files/python3.PNG){width=700px height=700px}
 
+
+
+---
+
+## 
 
 
 
