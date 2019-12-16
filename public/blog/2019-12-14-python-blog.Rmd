@@ -34,7 +34,7 @@ faithful <- mutate (faithful, waiting_hr = waiting/60)
 head(faithful)
 ```
 
-![](/blog/2019-12-14-python-blog_files/python2.PNG){width=600px height=600px}
+![](/blog/2019-12-14-python-blog_files/realpic.PNG){width=600px height=600px}
 
 I was able to use R in order to call in the data that I will be using, then with the package "dplyr", I was able to create two new variables in the dataset, Faithful. I used the function mutate() in order to convert the two variables from minutes to hours. I then used this altered dataset with the two new variables (eruptions_hr and waiting_hr) in Python and was able to create a scatterplot with "reticulate" and "matplotlib". 
 
@@ -48,16 +48,27 @@ Regular expression can be used in order to search through a large paragraph or c
 
 This can be done with the function re.findall(). For the example below, there are a bunch of IP addresses in this string that you are searching for, but this would be exhausting to perform by hand. In the command below, we are telling python to look through string2 and look for a pattern that begins with a digit can have from 1-3 digits from 0-9, then to match any character, in this case a period. This will repeat 3 times and end with any set of 1-3 digits from 0-9. 
 
+```{python}
+import re
+string2="Jan 13 00:48:59: DROP service 68->67(udp) from 213.92.153.167 to 69.43.107.219, prefix: \"spoof iana-0/8\" \
+(in: eth0 69.43.112.233(38:f8:b7:90:45:92):68 -> 217.70.100.113(00:21:87:79:9c:d9):67 UDP len:576 ttl:64) \
+Jan 13 12:02:48: ACCEPT service dns from 74.125.186.208 to firewall(pub-nic-dns), prefix: \"none\" \
+(in: eth0 74.125.186.208(00:1a:e3:52:5d:8e):36008 -> 140.105.63.158(00:1a:9a:86:2e:62):53 UDP len:82 ttl:38) \
+Jan 13 17:44:52: DROP service 68->67(udp) from 172.45.240.237 to 217.70.177.60, prefix: \"spoof iana-0/8\" \
+(in: eth0 216.34.90.16(00:21:91:fe:a2:6f):68 -> 69.43.85.253(00:07:e1:7c:53:db):67 UDP len:328 ttl:64) \
+Jan 13 17:52:08: ACCEPT service http from 213.121.184.130 to firewall(pub-nic), prefix: \"none\" \
+(in: eth0 213.121.184.130(00:05:2e:6a:a4:14):8504 -> 140.105.63.164(00:60:11:92:ed:1b):80 TCP flags: ****S* len:52 ttl:109)"
 
-![](/blog/2019-12-14-python-blog_files/python3.PNG){width=700px height=700px}
+re.findall(r"(?:\d{1,3}\.){3}\d{1,3}",string2)
+```
 
-Regular expression can also be really useful when searching through sequences of DNA, RNA, or even protein. You can use Regex to search for genes of interests or even gather segments from various sequences and compare them to one another. This would be useful to find mutations, deletions, or insertions.
+The output reveals all of the IP addresses that were found in the string, this can prove to be really efficient when searching through larger strings of information. Additionally, regular expression can also be really useful when searching through sequences of DNA, RNA, or even protein. You can use Regex to search for genes of interests or even gather segments from various sequences and compare them to one another. This would be useful to find mutations, deletions, or insertions.
 
 ---
 
 ## Python Bioinformatics:
 
-When analyzing two or more sequences of DNA, RNA, or even protein, we tend to search for similarities and differences and run experiments on those characteristics to test hypotheses. Sequence alignment involves arranging those sequences against one another in order to search for matches, mismatches, and gaps. For example, when looking at DNA and determining whether two or more organisms have a common ancestor, points of divergence can be traced by finding whether the organisms share similar gaps and mismatches. There are two types of alignments that I learned, global and local. Global alignment
+When analyzing two or more sequences of DNA, RNA, or even protein, we tend to search for similarities and differences and run experiments on those characteristics to test hypotheses. Sequence alignment involves arranging those sequences against one another in order to search for matches, mismatches, and gaps. For example, when looking at DNA and determining whether two or more organisms have a common ancestor, points of divergence can be traced by finding whether the organisms share similar gaps and mismatches. There are two types of alignments that I learned, global and local. Global alignment is used to find the best alignment of every sequence altogether. Below is an example of this using the Needleman-Wunsch algorithm: 
 
 ```{python}
 import numpy as np
@@ -91,6 +102,8 @@ mat
 
 ```
 
+Local alignment is used primarily to identify regions of similarity and regions of dissimilarity. An example of this is shown below using the Smith-Waterman algorithm:
+
 ```{python}
 import numpy as np
 
@@ -121,3 +134,8 @@ x2="ACAAGT"
 sw_fun(x2,x1)
 ```
 
+---
+
+## Thanks For Reading!
+
+These are just a few of the things I learned to do with Python. There is so much more that I can learn in the near future. Thanks for tuning in!
