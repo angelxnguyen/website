@@ -62,13 +62,49 @@ head(faithful)</code></pre>
 <hr />
 </div>
 <div id="regular-expression" class="section level2">
-<h2>Regular Expression</h2>
+<h2>Regular Expression:</h2>
 <p>Regular expression can be used in order to search through a large paragraph or chunk of information and find specific patterns that you are looking for. It utilizes symbols with different meanings in order to search through large pieces of infomation and only yield matches in the output. A chart with some f these symbols and meanings are shown below:</p>
 <p><img src="/blog/2019-12-14-python-blog_files/chart.PNG" width="250" height="250" /></p>
 <p>This can be done with the function re.findall(). For the example below, there are a bunch of IP addresses in this string that you are searching for, but this would be exhausting to perform by hand. In the command below, we are telling python to look through string2 and look for a pattern that begins with a digit can have from 1-3 digits from 0-9, then to match any character, in this case a period. This will repeat 3 times and end with any set of 1-3 digits from 0-9.</p>
 <p><img src="/blog/2019-12-14-python-blog_files/python3.PNG" width="700" height="700" /></p>
+<p>Regular expression can also be really useful when searching through sequences of DNA, RNA, or even protein. You can use Regex to search for genes of interests or even gather segments from various sequences and compare them to one another. This would be useful to find mutations, deletions, or insertions.</p>
 <hr />
 </div>
-<div id="section" class="section level2">
-<h2></h2>
+<div id="python-bioinformatics" class="section level2">
+<h2>Python Bioinformatics:</h2>
+<p>When analyzing two or more sequences of DNA, RNA, or even protein, we tend to search for similarities and differences and run experiments on those characteristics to test hypotheses. Sequence alignment involves arranging those sequences against one another in order to search for matches, mismatches, and gaps. For example, when looking at DNA and determining whether two or more organisms have a common ancestor, points of divergence can be traced by finding whether the organisms share similar gaps and mismatches. There are two types of alignments that I learned, global and local. Global alignment</p>
+<pre class="python"><code>import numpy as np
+
+def match_fun(a,b):  # Helper function to define match/mismatch scores
+    if a==b:
+        score=2 #match score
+    else:
+        score=-1 #mismatch score
+    return score
+
+def needleman(seq1,seq2,gap_penalty=-1):       # Needleman-Wunsch algorithm in a function
+    m=len(seq1) #length of horizontal sequence
+    n=len(seq2) #length of vertical sequence
+    score=np.empty(shape=[n+1,m+1]) #array to hold scores
+    for j in range(0, m + 1): score[0][j] = gap_penalty * j
+    for i in range(0, n + 1): score[i][0] = gap_penalty * i
+    for i in range(1, n + 1): 
+        for j in range(1, m + 1):
+            insert = score[i - 1][j] + gap_penalty 
+            delete = score[i][j - 1] + gap_penalty 
+            match = score[i - 1][j - 1] + match_fun(seq1[j-1], seq2[i-1])
+            score[i][j] = max(match, delete, insert)
+    return score
+
+x1=&quot;CCAGT&quot;
+x2=&quot;ACAAGT&quot;
+
+mat=needleman(x2,x1)
+mat</code></pre>
+<pre><code>## array([[ 0., -1., -2., -3., -4., -5., -6.],
+##        [-1., -1.,  1.,  0., -1., -2., -3.],
+##        [-2., -2.,  1.,  0., -1., -2., -3.],
+##        [-3.,  0.,  0.,  3.,  2.,  1.,  0.],
+##        [-4., -1., -1.,  2.,  2.,  4.,  3.],
+##        [-5., -2., -2.,  1.,  1.,  3.,  6.]])</code></pre>
 </div>
